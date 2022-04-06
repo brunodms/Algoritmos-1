@@ -18,8 +18,6 @@ def cadProd():
     prod.price = float(input("Preço: "))
     prod.stock = int(input("Estoque: "))
     return prod
-# Definição da Classe de Compra
-
 # Listar Variaveis
 def showProd(p):
     print("%-8d %-20s %.2f %7d" % (p.codigo, p.name, p.price, p.stock))
