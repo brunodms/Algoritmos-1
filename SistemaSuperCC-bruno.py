@@ -2,27 +2,31 @@
 class tProd:
     compras_cod = 0
     compras_name = None
-    compras_qtd = 0.0
+    compras_qtd = 0.00
     compras_price = 0
 # Criação da Classe de Compras
 class tCompras:
     codigo = 0
     name = None
-    price = 0.0
+    price = 0.00
     stock = 0
 # Definição da Classe do Produto
 def cadProd():
+    tcod = int(input("Código: "))
+    for i in range(len(lpd)):
+        if tcod == lpd[i].codigo:
+            return -1
     prod = tProd()
-    prod.codigo = int(input("Código: "))
+    prod.codigo = tcod
     prod.name = input("Nome: ")
     prod.price = float(input("Preço: "))
     prod.stock = int(input("Estoque: "))
     return prod
 # Listar Variaveis
 def showProd(p):
-    print("%-8d %-20s %.2f %7d" % (p.codigo, p.name, p.price, p.stock))
+    print("{:>8} {:<16} {:>12} {:>10}".format(p.codigo, p.name, p.price, p.stock))
 def showCompras(c):
-    print("%-8d %-20s %.2f %7d" % (c.compras_cod, c.compras_name, c.compras_price, c.compras_qtd))
+    print("{:>8} {:<16} {:>12} {:>10}".format(c.compras_cod, c.compras_name, c.compras_qtd, c.compras_price))
 # Buscar Variaveis do Produto Pelo Codigo
 def searchProd(pr, c):
     for i in range(len(pr)):
@@ -37,6 +41,9 @@ def updateProd(l, codigo):
         stk = int(input("Nova Quantidade: "))
         l[pos].price = prc
         l[pos].stock = stk
+    else:
+        print("Produto não encontrado!")
+        return -1
 # Registrar Compras
 def comprasProd(lproduto, cods):
         produto = searchProd(lproduto,cods)
@@ -45,26 +52,36 @@ def comprasProd(lproduto, cods):
             buy = int(input("informe a quantidade desejada: "))
             if buy > lproduto[produto].stock:
                 print(f"Estoque insuficiente, a quantidade disponivel é: ", lproduto[produto].stock)
+                return -1
             else:
                 c = tCompras()
-                c.compra_cod = lproduto[produto].codigo
-                c.compra_name = lproduto[produto].name
-                c.compra_price = buy * lproduto[produto].price
-                c.compra_qtd = buy
+                c.compras_cod = lproduto[produto].codigo
+                c.compras_name = lproduto[produto].name
+                c.compras_price = float(buy * lproduto[produto].price)
+                c.compras_qtd = buy
                 lproduto[produto].stock -= buy
                 return c
+        else:
+            print("Produto não encontrado!")
+            return -1
 # Carrinho de Compras
 def listCompras(cprs):
-    print("Código   Nome                 Preço  Estoque")
-    print("============================================")
+    print("{:>8} {:<16} {:>12} {:>10}".format("Código", "Nome", "Quantidade", "Preço"))
+    print("=================================================")
     for i in range(len(cprs)):
-        showProd(cprs[i])
+        showCompras(cprs[i])
 # Listar Todas as Variaveis do produto Organizadamente
 def listProd(lprod):
-    print("Código   Nome                 Preço  Estoque")
-    print("============================================")
+    print("{:>8} {:<16} {:>12} {:>10}".format("Código", "Nome", "Preço", "Estoque"))
+    print("=================================================")
     for i in range(len(lprod)):
         showProd(lprod[i])
+# Valor total da compra
+def vTotal(cprs):
+    vT = 0.00
+    for i in range(len(cprs)):
+        vT += cprs[i].compras_price
+    print("{:>38}".format("Total"), "{:>10}".format(vT))
 # Menu
 def menu():
     print("1- Incluir")
@@ -73,43 +90,46 @@ def menu():
     print("4- Cosultar Produto")
     print("5- Relatorio de Produtos")
     print('0- Sair')
-    fn = int(input())
-    return fn
-
-
+    mn = int(input())
+    return mn
 # Criação da Lista de Produtos
 lpd = []
 compras = []
 # Começo do Loop
 while True:
-    fn = menu()
+    mn = menu()
     # Sair
-    if fn == 0:
+    if mn == 0:
         break
     # Incluir
-    if fn == 1:
+    if mn == 1:
         pr = cadProd()
-        lpd.append(pr)
+        if pr == -1:
+            print("Código do produto já cadastrado!")
+        else:
+            lpd.append(pr)
     # Atualizar
-    if fn == 2:
+    if mn == 2:
         cd = int(input("Digite o Código do Produto: "))
         updateProd(lpd, cd)
     # Registrar
-    if fn == 3:
-        cod = int(input("Digite o Código do Produto: "))
-        cpr = comprasProd(lpd, cod)
-        compras.append(cpr)
-        listCompras(compras)
+    if mn == 3:
+        cd = int(input("Digite o Código do Produto: "))
+        cpr = comprasProd(lpd, cd)
+        if cpr != -1:
+            compras.append(cpr)
+            listCompras(compras)
+            vTotal(compras)
     # Consultar
-    if fn == 4:
-        c = int(input("Digite o Código do Produto: "))
-        pos = searchProd(lpd, c)
+    if mn == 4:
+        cd = int(input("Digite o Código do Produto: "))
+        pos = searchProd(lpd, cd)
         if pos == -1:
             print("Produto não encontrado!")
         else:
-            print("Código   Nome                 Preço  Estoque")
-            print("============================================")
+            print("{:>8} {:<16} {:>10} {:>10}".format("Código", "Nome", "Preço", "Estoque"))
+            print("=================================================")
             showProd(lpd[pos])
     # Listar todos
-    if fn == 5:
+    if mn == 5:
         listProd(lpd)
